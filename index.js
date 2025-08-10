@@ -19,9 +19,10 @@ app.post("/webhook", async (req, res) => {
 
   async function consultarDescripcion(agent) {
     const nombre = agent.parameters.producto;
+    console.log(nombre);
 
     const snapshot = await db.collection("productos")
-      .where("nombre", "==", nombre)
+      .where("nombre", "==", nombre.toLowerCase())
       .limit(1)
       .get();
 
