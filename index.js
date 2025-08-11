@@ -22,7 +22,7 @@ app.post("/webhook", async (req, res) => {
     console.log(nombre);
 
     const snapshot = await db.collection("productos")
-      .where("nombre", "==", nombre.toLowerCase())
+      .where("nombre", "==", nombre)
       .limit(1)
       .get();
 
