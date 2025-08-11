@@ -18,13 +18,14 @@ app.post("/webhook", async (req, res) => {
   const agent = new WebhookClient({ request: req, response: res });
 
   async function consultarDescripcion(agent) {
-    const nombre = agent.parameters.producto;
-    console.log(nombre);
+    let nombre = agent.parameters.producto || "";
+    nombre = nombre.trim().toLowerCase().replace(/\s+/g, "_");
 
     const snapshot = await db.collection("productos")
       .where("nombre", "==", nombre)
       .limit(1)
       .get();
+
 
     if (snapshot.empty) {
       agent.add(`No encontré información sobre "${nombre}". ¿Podés repetirlo?`);
