@@ -19,17 +19,17 @@ app.post("/webhook", async (req, res) => {
 
   async function consultarDescripcion(agent) {
     let nombre = agent.parameters.producto || "";
-    nombre = nombre.trim().toLowerCase().replace(/\s+/g, "_");
-    
-    db.doc(`productos/${nombre}`).get().then((doc) => {
-      if (doc.exists) {
-        const producto = doc.data();
-        agent.add(`${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}`);
-      } else {
-        agent.add(`No encontré información sobre "${nombre}". ¿Podés repetirlo?`);
-      }
-    });
+  
+    const doc = await db.doc(`productos/${nombre}`).get();
+  
+    if (doc.exists) {
+      const producto = doc.data();
+      agent.add(`${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}`);
+    } else {
+      agent.add(`No encontré información sobre "${nombre}". ¿Podés repetirlo?`);
+    }
   }
+  
 
   const intentMap = new Map();
   intentMap.set("ConsultarDescripcion", consultarDescripcion);
