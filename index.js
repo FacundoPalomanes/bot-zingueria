@@ -36,7 +36,14 @@ app.post("/webhook", (req, res) => {
 
       if (doc.exists) {
         const producto = doc.data();
-        respuesta += `${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}\n`;
+        respuesta += `${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}`;
+        
+        if(producto.medidas && producto.medidas.length > 0) {
+          respuesta += `\nHay distintas medidas: ${producto.medidas.map(medida => medida).join(", ")}`;
+        }
+        if (producto.tipos && producto.tipos.length > 0) {
+          respuesta += `\nHay de distintos tipos: ${producto.tipos.map(tipo => tipo).join(", ")}`;
+        }
       } else {
         respuesta += `No encontré información sobre "${nombre}". ¿Podés repetirlo?\n`;
       }
