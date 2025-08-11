@@ -18,15 +18,20 @@ app.post("/webhook", async (req, res) => {
   const agent = new WebhookClient({ request: req, response: res });
 
   async function consultarDescripcion(agent) {
-    let nombre = agent.parameters.producto || "";
+    let productos = agent.parameters.producto;
   
-    const doc = await db.doc(`productos/${nombre}`).get();
-  
-    if (doc.exists) {
-      const producto = doc.data();
-      agent.add(`${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}`);
-    } else {
-      agent.add(`No encontré información sobre "${nombre}". ¿Podés repetirlo?`);
+    if(!productos || productos.length === 0) {
+      agent.add("No entendi que producto queres. ¿Podés repetir?")
+    }
+    for(nombre of productos) {
+      const doc = await db.doc(`productos/${nombre}`).get();
+    
+      if (doc.exists) {
+        const producto = doc.data();
+        agent.add(`${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}`);
+      } else {
+        agent.add(`No encontré información sobre "${nombre}". ¿Podés repetirlo?`);
+      }
     }
   }
   
