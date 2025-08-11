@@ -29,6 +29,9 @@ app.post("/webhook", (req, res) => {
       productos = [productos];
     }
 
+    // Filter out duplicates by converting to lowercase and using Set
+    productos = [...new Set(productos.map(producto => producto.toLowerCase()))];
+
     let respuesta = "";
 
     for (const nombre of productos) {
@@ -40,11 +43,11 @@ app.post("/webhook", (req, res) => {
         
         if(producto.medidas && producto.medidas.length > 0) {
             const medidasFormateadas = producto.medidas.slice(0, -1).join(", ") + " y " + producto.medidas[producto.medidas.length - 1];
-            respuesta += `\nHay distintas medidas: ${medidasFormateadas}`;
+            respuesta += `\nHay distintas medidas: ${medidasFormateadas} `;
         }
         if (producto.tipos && producto.tipos.length > 0) {
             const tiposFormateados = producto.tipos.slice(0, -1).join(", ") + " y " + producto.tipos[producto.tipos.length - 1];
-            respuesta += `\nHay de distintos tipos: ${tiposFormateados}`;
+            respuesta += `\nHay de distintos tipos: ${tiposFormateados} `;
         }
       } else {
         respuesta += `No encontré información sobre "${nombre}". ¿Podés repetirlo?\n`;
