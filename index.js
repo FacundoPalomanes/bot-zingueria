@@ -20,20 +20,33 @@ app.post("/webhook", async (req, res) => {
   async function consultarDescripcion(agent) {
     let productos = agent.parameters.producto;
   
-    if(!productos || productos.length === 0) {
-      agent.add("No entendi que producto queres. ¿Podés repetir?")
+    if (!productos) {
+      agent.add("No entendí qué producto querés. ¿Podés repetir?");
+      return;
     }
-    for(nombre of productos) {
-      const doc = await db.doc(`productos/${nombre}`).get();
-    
+  
+    // Si es string, convertí a array para iterar igual
+    if (!Array.isArray(productos)) {
+      productos = [productos];
+    }
+  
+    let respuesta = "";
+  
+    for (const nombre of productos) {
+      const doc = await db.doc(`productos/${nombre.toLowerCase()}`).get();
+  
       if (doc.exists) {
         const producto = doc.data();
-        agent.add(`${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}`);
+        respuesta += `${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}\n`;
       } else {
-        agent.add(`No encontré información sobre "${nombre}". ¿Podés repetirlo?`);
+        respuesta += `No encontré información sobre "${nombre}". ¿Podés repetirlo?\n`;
       }
     }
+  
+    agent.add(respuesta.trim());
   }
+  
+  
   
 
   const intentMap = new Map();
