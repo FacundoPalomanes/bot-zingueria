@@ -39,10 +39,12 @@ app.post("/webhook", (req, res) => {
         respuesta += `${producto.nombre}: ${producto.descripcion || "No hay descripción disponible."}`;
         
         if(producto.medidas && producto.medidas.length > 0) {
-          respuesta += `\nHay distintas medidas: ${producto.medidas.map(medida => medida).join(", ")}`;
+            const medidasFormateadas = producto.medidas.slice(0, -1).join(", ") + " y " + producto.medidas[producto.medidas.length - 1];
+            respuesta += `\nHay distintas medidas: ${medidasFormateadas}`;
         }
         if (producto.tipos && producto.tipos.length > 0) {
-          respuesta += `\nHay de distintos tipos: ${producto.tipos.map(tipo => tipo).join(", ")}`;
+            const tiposFormateados = producto.tipos.slice(0, -1).join(", ") + " y " + producto.tipos[producto.tipos.length - 1];
+            respuesta += `\nHay de distintos tipos: ${tiposFormateados}`;
         }
       } else {
         respuesta += `No encontré información sobre "${nombre}". ¿Podés repetirlo?\n`;
